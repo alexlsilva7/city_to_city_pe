@@ -3,12 +3,13 @@ import 'dart:core';
 import 'package:matrices/matrices.dart';
 
 class GrafoMatriz {
-  final List<String> vertices = <String>[];
+  late final List<String> _vertices;
 
   late final SquareMatrix _matriz;
 
-  GrafoMatriz(int quantVertices) {
-    _matriz = SquareMatrix.diagonalFromNumber(1, quantVertices);
+  GrafoMatriz({required List<String> vertices}) {
+    _matriz = SquareMatrix.diagonalFromNumber(1, vertices.length);
+    _vertices = vertices;
   }
 
   @override
