@@ -12,6 +12,16 @@ class GrafoMatriz {
     _vertices = vertices;
   }
 
+  void addAresta(String v1, String v2, double peso) {
+    int posV1 = _vertices.indexOf(v1);
+    int posV2 = _vertices.indexOf(v2);
+
+    if (posV1 != -1 && posV2 != -1) {
+      _matriz.matrix[posV1][posV2] = peso;
+      _matriz.matrix[posV2][posV1] = peso;
+    }
+  }
+
   @override
   String toString() {
     return _matriz.toString();
