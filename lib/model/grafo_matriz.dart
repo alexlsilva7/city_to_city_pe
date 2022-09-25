@@ -22,6 +22,40 @@ class GrafoMatriz {
     }
   }
 
+  int getIndexVertice(String vertice) {
+    return _vertices.indexOf(vertice);
+  }
+
+  String getVerticeByIndex(int index) {
+    return _vertices[index];
+  }
+
+  List<String> getVerticesConectados(String vertice) {
+    int posVertice = _vertices.indexOf(vertice);
+    List<String> verticesConectados = [];
+    for (int i = 0; i < _vertices.length; i++) {
+      if (_matriz.matrix[posVertice][i] > 0 && posVertice != i) {
+        verticesConectados.add(_vertices[i]);
+      }
+    }
+    return verticesConectados;
+  }
+
+  Map<String, double> getTodasArestas() {
+    Map<String, double> arestas = {};
+    for (int i = 0; i < _vertices.length; i++) {
+      for (int j = 0; j < _vertices.length; j++) {
+        if (_matriz.matrix[i][j] > 0 &&
+            i != j &&
+            !arestas.containsKey("${_vertices[j]}${_vertices[i]}")) {
+          arestas.putIfAbsent(
+              "${_vertices[i]}${_vertices[j]}", () => _matriz.matrix[i][j]);
+        }
+      }
+    }
+    return arestas;
+  }
+
   @override
   String toString() {
     return _matriz.toString();
