@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:city_to_city_pe/model/algoritimo_kruskal_result.dart';
 import 'package:matrices/matrices.dart';
 
 class GrafoMatriz {
@@ -54,6 +55,47 @@ class GrafoMatriz {
       }
     }
     return arestas;
+  }
+
+  AlgoritimoDeKruskalResult kruskalAlgorithm() {
+    List<Set> conjuntos = [];
+    List<String> arvore = [];
+    double pesoArvore = 0;
+
+    //inicializando os conjuntos
+    for (String vertice in _vertices) {
+      conjuntos.add({vertice});
+    }
+
+    //ordenando as arestas pelo peso
+    Map<String, double> map = getTodasArestas();
+    List<String> arestas = map.keys.toList();
+    arestas.sort((a, b) => map[a]!.compareTo(map[b]!));
+
+    for (String aresta in arestas) {
+      //busca os dois conjuntos que contem os vertices da aresta
+      Set conjuntoV1 = conjuntos
+          .firstWhere((element) => element.contains(aresta.substring(0, 1)));
+      Set conjuntoV2 = conjuntos
+          .firstWhere((element) => element.contains(aresta.substring(1, 2)));
+      //se os conjuntos forem diferentes, adiciona a aresta na arvore e junta os conjuntos
+      if (conjuntoV1 != conjuntoV2) {
+        //adiciona a aresta na arvore
+        arvore.add(aresta);
+        //soma o peso da aresta na arvore
+        pesoArvore += map[aresta]!;
+        //junta os conjuntos
+        conjuntoV1.addAll(conjuntoV2);
+        conjuntos.remove(conjuntoV2);
+      }
+      //Sai do algoritmo quando todos os vertices estiverem no mesmo conjunto
+      if (conjuntos.length == 1) {
+        break;
+      }
+    }
+
+    return AlgoritimoDeKruskalResult(
+        conjuntos: conjuntos, pesoArvore: pesoArvore, arvore: arvore);
   }
 
   @override
