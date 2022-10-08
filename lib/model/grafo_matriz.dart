@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:city_to_city_pe/model/dijkstra_result.dart';
 import 'package:matrices/matrices.dart';
 
 class GrafoMatriz {
@@ -59,5 +60,61 @@ class GrafoMatriz {
   @override
   String toString() {
     return _matriz.toString();
+  }
+
+  int _getMenorDistanciaVerticeInexplorado(
+      List<double> dist, List<bool> visitados) {
+    // Initialize min value
+    double min = double.infinity;
+    int minIndex = -1;
+
+    for (int v = 0; v < _vertices.length; v++) {
+      if (visitados[v] == false && dist[v] <= min) {
+        min = dist[v];
+        minIndex = v;
+      }
+    }
+
+    return minIndex;
+  }
+
+  DijkstraResult dijkstra(String verticeInicial, String verticeFinal) {
+    int posVerticeInicial = _vertices.indexOf(verticeInicial);
+    List<double> distancias = [];
+    List<bool> visitados = [];
+    List<int> anteriores = [];
+
+    // Inicializa as listas
+    for (int i = 0; i < _vertices.length; i++) {
+      distancias.add(double.infinity);
+      visitados.add(false);
+      anteriores.add(-1);
+    }
+    // Distancia do vertice inicial = 0;
+    distancias[posVerticeInicial] = 0;
+    // Encontra o menor caminho para todos os vertices
+    while (visitados[_vertices.indexOf(verticeFinal)] == false) {
+      int indexMenorVerticeInexplorado =
+          _getMenorDistanciaVerticeInexplorado(distancias, visitados);
+      visitados[indexMenorVerticeInexplorado] = true;
+      for (int v = 0; v < _vertices.length; v++) {
+        if (!visitados[v] &&
+            _matriz.matrix[indexMenorVerticeInexplorado][v] > 0 &&
+            distancias[indexMenorVerticeInexplorado] != double.infinity &&
+            distancias[indexMenorVerticeInexplorado] +
+                    _matriz.matrix[indexMenorVerticeInexplorado][v] <
+                distancias[v]) {
+          distancias[v] = distancias[indexMenorVerticeInexplorado] +
+              _matriz.matrix[indexMenorVerticeInexplorado][v];
+          anteriores[v] = indexMenorVerticeInexplorado;
+        }
+      }
+    }
+
+    return DijkstraResult(
+        distancias: distancias,
+        anteriores: anteriores,
+        vertices: _vertices,
+        indexVerticeFinal: _vertices.indexOf(verticeFinal));
   }
 }
