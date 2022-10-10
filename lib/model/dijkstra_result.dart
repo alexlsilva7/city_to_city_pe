@@ -29,6 +29,10 @@ class DijkstraResult {
     return _getCaminho();
   }
 
+  double getDistanciaOf(String vertice) {
+    return distancias[vertices.indexOf(vertice)];
+  }
+
   @override
   String toString() {
     return "Vertices: $vertices | Anteriores: $anteriores \nCaminho: ${caminhoString()} | Distancia: ${distancias[indexVerticeFinal]}";
