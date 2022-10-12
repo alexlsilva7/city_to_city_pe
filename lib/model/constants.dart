@@ -1,4 +1,4 @@
-const List<String> cidades = [
+List<String> cidades = [
   "São João",
   "Garanhuns",
   "Angelim",

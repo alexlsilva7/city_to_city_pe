@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    cidades.sort();
     dropdownItems = cidades
         .map((e) => DropdownMenuItem<String>(
               value: e,
@@ -165,6 +166,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     SizedBox(
                                       width: double.infinity,
                                       child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.deepPurple,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
                                         onPressed: selectedCityPartida
                                                     .isNotEmpty &&
                                                 selectedCityDestino.isNotEmpty
@@ -188,7 +196,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 }
                                               }
                                             : null,
-                                        child: const Text('Calcular'),
+                                        child: const Text(
+                                          'Calcular',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
                                     )
                                   ],
