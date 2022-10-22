@@ -1,7 +1,10 @@
+import 'package:app_ui/app_ui.dart';
 import 'package:city_to_city_pe/model/constants.dart';
 import 'package:city_to_city_pe/model/dijkstra_result.dart';
 import 'package:city_to_city_pe/model/grafo_matriz.dart';
+import 'package:city_to_city_pe/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -66,11 +69,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          decoration: const BoxDecoration(
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/background.jpg'),
+              image: const AssetImage('assets/images/background.jpg'),
               fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                Provider.of<ThemeProvider>(context).isDarkMode
+                    ? Colors.black54
+                    : Colors.white54,
+                BlendMode.darken,
+              ),
             ),
           ),
           child: Scaffold(
@@ -78,29 +88,51 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
-                AnimatedBuilder(
-                  animation: animationTitle,
-                  builder: (context, child) {
-                    return Transform.translate(
-                      offset: Offset(-200.00 + animationTitle.value * 200, 0),
-                      child: child,
-                    );
-                  },
-                  child: FadeTransition(
-                    opacity: animationTitle,
-                    child: Container(
-                      width: 300,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        width: 200,
-                        height: 100,
-                        fit: BoxFit.cover,
+                Consumer<ThemeProvider>(
+                  builder: (context, themeProvider, child) => AnimatedBuilder(
+                    animation: animationTitle,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(0, -200.00 + animationTitle.value * 200),
+                        child: child,
+                      );
+                    },
+                    child: FadeTransition(
+                      opacity: animationTitle,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        color: themeProvider.isDarkMode
+                            ? AppColors.black54
+                            : AppColors.white.withOpacity(0.54),
+                        width: double.infinity,
+                        height: 60,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Opacity(
+                              opacity: 0,
+                              child: IconButton(
+                                icon: const Icon(Icons.brightness_6),
+                                onPressed: () {},
+                              ),
+                            ),
+                            Text(
+                              'City to City'.toUpperCase(),
+                              style: AppTextStyle.headline6.copyWith(
+                                  color: themeProvider.isDarkMode
+                                      ? AppColors.white
+                                      : AppColors.black),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.brightness_6,
+                              ),
+                              onPressed: () {
+                                themeProvider.toggleTheme();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -120,7 +152,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 width: 300,
@@ -177,20 +210,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     .isNotEmpty &&
                                                 selectedCityDestino.isNotEmpty
                                             ? () {
-                                                setState(() {
-                                                  result = matriz.dijkstra(
-                                                      selectedCityPartida,
-                                                      selectedCityDestino);
-                                                });
                                                 if (_animationControllerResult
                                                         .value ==
                                                     1) {
                                                   _animationControllerResult
                                                       .reverse()
-                                                      .then((value) =>
-                                                          _animationControllerResult
-                                                              .forward());
+                                                      .then((value) {
+                                                    setState(() {
+                                                      result = matriz.dijkstra(
+                                                          selectedCityPartida,
+                                                          selectedCityDestino);
+                                                    });
+                                                    _animationControllerResult
+                                                        .forward();
+                                                  });
                                                 } else {
+                                                  setState(() {
+                                                    result = matriz.dijkstra(
+                                                        selectedCityPartida,
+                                                        selectedCityDestino);
+                                                  });
                                                   _animationControllerResult
                                                       .forward();
                                                 }
@@ -198,10 +237,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             : null,
                                         child: const Text(
                                           'Calcular',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
                                         ),
                                       ),
                                     )
@@ -231,7 +266,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 width: 300,
                                 decoration: BoxDecoration(
                                   color: result != null
-                                      ? Colors.white
+                                      ? Theme.of(context)
+                                          .scaffoldBackgroundColor
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -260,10 +296,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           ),
                                         ),
                                         afterLineStyle: const LineStyle(
-                                          color: Colors.blue,
+                                          color: AppColors.secondary,
                                         ),
                                         beforeLineStyle: const LineStyle(
-                                          color: Colors.blue,
+                                          color: AppColors.secondary,
                                         ),
                                         lineXY: 0.1,
                                         isFirst: index == 0,
