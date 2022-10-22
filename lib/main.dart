@@ -1,5 +1,8 @@
+import 'package:app_ui/app_ui.dart';
+import 'package:city_to_city_pe/provider/theme_provider.dart';
 import 'package:city_to_city_pe/views/home_page/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,14 +14,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, theme, child) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'City to City',
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: theme.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const HomePage(),
+        ),
       ),
-      home: const HomePage(),
     );
   }
 }
