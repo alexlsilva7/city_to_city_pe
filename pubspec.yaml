@@ -38,6 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   matrices: ^1.0.9
   timeline_tile: ^2.0.0
+  app_ui:
+    path: app_ui
+  provider: ^6.0.4
 
 dev_dependencies:
   flutter_test:
